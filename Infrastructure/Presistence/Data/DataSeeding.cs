@@ -1,5 +1,7 @@
 ﻿using Domain.Contracts;
+using Domain.Entities.IdentityModule;
 using Domain.Entities.ProductModule;
+using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Presistence.Data
 {
-    public class DataSeeding(AppDbContext dbContext) : IDataSeeding
+    public class DataSeeding(AppDbContext dbContext, UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager) : IDataSeeding
     {
         public void SeedData()
         {
@@ -53,6 +55,38 @@ namespace Presistence.Data
             catch (Exception ex)
             {
 
+            }
+        }
+
+        public async Task SeedIdentityDataAsync()
+        {
+            if(!roleManager.Roles.Any())
+            {
+                await roleManager.CreateAsync(new IdentityRole("Admin"));
+                await roleManager.CreateAsync(new IdentityRole("SuperAdmin"));
+            }
+
+            if(!userManager.Users.Any())
+            {
+                var adminUser = new ApplicationUser
+                {
+                    DisplayName = "Admin",
+                    UserName = "Admin",
+                    Email = "Admin@gmail.com",
+                    PhoneNumber = "01234567890"
+                };
+                var superAdminUser = new ApplicationUser
+                {
+                    DisplayName = "SuperAdmin",
+                    UserName = "SuperAdmin",
+                    Email = "SuperAdmin@gmail.com",
+                    PhoneNumber = "01134567890"
+                };
+                await userManager.CreateAsync(adminUser, "P@ssw0rd");
+                await userManager.CreateAsync(superAdminUser, "P@ssw0rd");
+
+                await userManager.AddToRoleAsync(adminUser, "Admin");
+                await userManager.AddToRoleAsync(adminUser, "SuperAdmin");
             }
         }
     }

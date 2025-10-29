@@ -9,5 +9,6 @@ namespace Domain.Contracts
     public interface IDataSeeding
     {
         void SeedData(); // implementation in the presistence layer (the place that implement the domain layer)
+        Task SeedIdentityDataAsync();
     }
 }

@@ -1,4 +1,5 @@
-﻿using Domain.Exceptions;
+﻿using Domain.Entities;
+using Domain.Exceptions;
 using Shared.ErrorModels;
 using System.Net;
 using System.Text.Json;
@@ -49,25 +50,23 @@ namespace E_Commerce.API.Middlewares
 
         private async Task HandleExceptionAsync(HttpContext context, Exception ex)
         {
-            //1 Change StatusCode
-            //context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
-            //context.Response.StatusCode = StatusCodes.Status500InternalServerError;
+            context.Response.ContentType = "application/json";
+
+            var response = new ErrorDetails
+            {
+                ErrorMessage = ex.Message
+            };
             context.Response.StatusCode = ex switch
             {
                 NotFoundException => StatusCodes.Status404NotFound,
+                UnauthorizedException => StatusCodes.Status401Unauthorized,
+                ValidationException validationException => HandleValidationException(validationException, response),
                 (_) => StatusCodes.Status500InternalServerError
             };
+            response.StatusCode = context.Response.StatusCode;
 
-            //2 Change ContentType
-            context.Response.ContentType = "application/json";
-
-            //3 Write Response In The Body
-            var response = new ErrorDetails
-            {
-                StatusCode = context.Response.StatusCode,
-                ErrorMessage = ex.Message
-            }.ToString();
-            await context.Response.WriteAsync(response);
+            // NOOOOOOOOTE THAT WE DID AN OVERRIDE TO THE ToString() WE USED THE JsonSerializer.Serialize(this) //
+            await context.Response.WriteAsync(response.ToString());
 
             #region THREE WAYS TO SERIALIZE THE INSTANCE
             #region 1
@@ -81,6 +80,12 @@ namespace E_Commerce.API.Middlewares
             //await context.Response.WriteAsJsonAsync(response); 
             #endregion 
             #endregion
+        }
+
+        private int HandleValidationException(ValidationException validationException, ErrorDetails response)
+        {
+            response.Errors = validationException.Errors;
+            return StatusCodes.Status400BadRequest;
         }
     }
 }
