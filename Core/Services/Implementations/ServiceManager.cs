@@ -14,17 +14,26 @@ using System.Threading.Tasks;
 
 namespace Services.Implementations
 {
-    public class ServiceManager(IUnitOfWork unitOfWork, IMapper mapper, IBasketRepository basketRepository, UserManager<ApplicationUser> userManager, IOptions<JwtOptions> options, IConfiguration configuration) : IServiceManager
+    public class ServiceManager(IUnitOfWork unitOfWork,
+        IMapper mapper,
+        IBasketRepository basketRepository,
+        UserManager<ApplicationUser> userManager,
+        IOptions<JwtOptions> options,
+        IConfiguration configuration,
+        ICacheRepository cacheRepository) : IServiceManager
     {
         private readonly Lazy<IProductService> productService = new Lazy<IProductService>(() => new ProductService(unitOfWork, mapper));
         private readonly Lazy<IBasketService> basketService = new Lazy<IBasketService>(() => new BasketService(basketRepository, mapper));
         private readonly Lazy<IAuthenticationService> authenticationService = new Lazy<IAuthenticationService>(() => new AuthenticationService(userManager, options, mapper));
         private readonly Lazy<IOrderService> orderService = new Lazy<IOrderService>(() => new OrderService(mapper, basketRepository, unitOfWork));
         private readonly Lazy<IPaymentService> paymentService = new Lazy<IPaymentService>(() => new PaymentService(configuration, basketRepository, unitOfWork, mapper));
+        private readonly Lazy<ICacheService> cacheService = new Lazy<ICacheService>(() => new CacheService(cacheRepository));
+
         public IProductService ProductService => productService.Value;
         public IBasketService BasketService => basketService.Value;
         public IAuthenticationService AuthenticationService => authenticationService.Value;
         public IOrderService OrderService => orderService.Value;
         public IPaymentService PaymentService => paymentService.Value;
+        public ICacheService CacheService => cacheService.Value;
     }
 }
