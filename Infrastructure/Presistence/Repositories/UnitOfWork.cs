@@ -35,7 +35,7 @@ namespace Presistence.Repositories
         //This implementation is faster than the ordinary DICTIONARY implementation //
         public IGenericRepository<TEntity, TKey> GetRepository<TEntity, TKey>() where TEntity : BaseEntity<TKey>
         {
-            //                                                         To important to use the discard to match the method params
+            //                                                         Very important to use the discard to match the method params
             return (IGenericRepository<TEntity, TKey>)repositories.GetOrAdd(typeof(TEntity).Name, (_) => new GenericRepository<TEntity, TKey>(dbContext));
         }
 

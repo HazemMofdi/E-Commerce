@@ -3,6 +3,7 @@ using Domain.Contracts;
 using E_Commerce.API.Extensions;
 using E_Commerce.API.Factories;
 using E_Commerce.API.Middlewares;
+using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Presistence.Data;
@@ -26,13 +27,13 @@ namespace E_Commerce.API
 
             #region DI Container
             //Web Api Services
-            builder.Services.AddWebApiServices();
+            builder.Services.AddWebApiServices(builder.Configuration);
 
             //Infrastructure Services
             builder.Services.AddInfrastructureServices(builder.Configuration);
 
             //Core Services
-            builder.Services.AddCoreServices(); 
+            builder.Services.AddCoreServices(builder.Configuration); 
             #endregion
 
             var app = builder.Build();
@@ -50,9 +51,10 @@ namespace E_Commerce.API
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
+            app.UseCors("CorsPolicy");
+            app.UseRouting();
+            app.UseAuthentication();
             app.UseAuthorization();
-
-
             app.MapControllers();
 
             app.Run(); 
