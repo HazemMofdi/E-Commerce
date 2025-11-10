@@ -27,12 +27,12 @@ namespace E_Commerce.API.Extensions
                 options.UseSqlServer(configuration.GetConnectionString("Identityconstr"));
             });
 
-            services.AddIdentity<ApplicationUser, IdentityRole>( options =>
+            services.AddIdentity<ApplicationUser, IdentityRole>(options =>
             {
                 options.Password.RequireNonAlphanumeric = true;
                 options.Password.RequireUppercase = true;
                 options.Password.RequireLowercase = true;
-                options.Password.RequireDigit= true;
+                options.Password.RequireDigit = true;
 
                 options.User.RequireUniqueEmail = true;
             }).AddEntityFrameworkStores<AppDbContextIdentity>();

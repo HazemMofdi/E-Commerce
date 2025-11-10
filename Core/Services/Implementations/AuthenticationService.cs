@@ -51,7 +51,7 @@ namespace Services.Implementations
                 user.Address.Country = addressDTO.Country;
             }
             else // create
-            {
+    {
                 var address = mapper.Map<Address>(addressDTO);
                 user.Address = address;
             }

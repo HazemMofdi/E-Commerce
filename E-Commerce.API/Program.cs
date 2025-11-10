@@ -33,7 +33,7 @@ namespace E_Commerce.API
             builder.Services.AddInfrastructureServices(builder.Configuration);
 
             //Core Services
-            builder.Services.AddCoreServices(builder.Configuration); 
+            builder.Services.AddCoreServices(builder.Configuration);
             #endregion
 
             var app = builder.Build();
@@ -54,10 +54,13 @@ namespace E_Commerce.API
             app.UseCors("CorsPolicy");
             app.UseRouting();
             app.UseAuthentication();
+            app.UseCors("CorsPolicy");
+            app.UseRouting();
+            app.UseAuthentication();
             app.UseAuthorization();
             app.MapControllers();
 
-            app.Run(); 
+            app.Run();
             #endregion
         }
     }

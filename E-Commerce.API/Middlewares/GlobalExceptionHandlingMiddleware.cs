@@ -1,4 +1,5 @@
-﻿using Domain.Exceptions;
+﻿using Domain.Entities;
+using Domain.Exceptions;
 using Shared.ErrorModels;
 using System.Net;
 using System.Text.Json;
